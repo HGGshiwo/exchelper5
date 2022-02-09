@@ -1,0 +1,158 @@
+<template>
+  <el-container style="height:100%;">
+      <el-aside style="height:100%; position:fixed;margin-top:60px">
+         <info-bar :progress="progress" :excName="excName"/>
+      </el-aside>
+
+      <el-main style="height:calc(100%-60px);margin-left:300px;margin-top:60px;">
+        <el-scrollbar style="width:100%;">
+          <div v-for="(choices,key,i) in history.done" :key="key" style="text-align:left;">
+            <p>{{i+1}}&nbsp;&nbsp;{{excs[key].text}}</p>
+            <div v-for="(c,ck) in choices" :key="ck">
+              <div> <el-checkbox v-model="choices[ck]" @click="click(key,ck)">{{ck+excs[key].choices[ck]}}</el-checkbox></div>
+            </div>
+            <el-divider/>
+          </div>
+        </el-scrollbar>
+      </el-main>
+    </el-container>
+</template>
+
+<script>
+import InfoBar from '../components/InfoBar.vue'
+import { computed, onUnmounted, ref, onUpdated, onMounted, onBeforeUpdate, onBeforeMount} from 'vue'
+import { useRoute } from 'vue-router'
+import axios from 'axios';
+import { useStore } from 'vuex'
+
+export default {  
+  components: { InfoBar },
+    async setup(){
+
+      const store = useStore()
+
+      //得到当前的题集名称
+      const route = useRoute()
+      const { excName } = route.params
+
+      //记录下开始的时间
+      const start = new Date()
+      
+      //数字转为两位字符串
+      function num2Str(num){
+        return ("00"+num.toString()).slice(-2)
+      }
+
+      //得到当前的日期yy:mm:dd
+      function getDate(){
+        let date = new Date()
+        return date.getFullYear().toString()+":"+num2Str(date.getMonth()+1)+":"+num2Str(date.getDay());
+      }
+
+      //得到当前的时间hh:mm:ss
+      function getTime(){
+        let date = new Date()
+        return num2Str(date.getHours())+":"+num2Str(date.getMinutes())+":"+num2Str(date.getSeconds()); 
+      }
+
+      //新建一条history记录
+      const history = ref({
+        exc: excName,
+        done:{},
+        startTime: getTime(),
+        endTime: "",
+        span: "",
+        num: 0,
+        proper: 0,
+      })
+
+      //请求当前的完整题集
+      const excs = ref({})
+      axios.get("https://hggshiwo.github.io/static/"+excName+".json").then(
+        res=>{
+          excs.value = res.data
+        },
+      ).catch(
+        error=>{
+          alert(error)
+        }
+      ).then(()=>{
+          //通过题集完善history
+          for(let key in excs.value){
+            history.value.done[key] = {}
+            for(let kk in excs.value[key].choices){
+              history.value.done[key][kk] = false
+            }
+          }
+      })
+
+      //点击的回调事件
+      function click(key, ck){
+        if(!excs.value[key].multi){
+          for(let choice in history.value.done[key]){
+            if(choice != ck){
+              history.value.done[key][choice]=false
+            } 
+          }
+        }
+      }
+
+      //计算进度值
+      const progress = computed(() => {
+        let done = 0
+        for(let key in history.value.done){
+          let isDone = false
+          for(let ckey in history.value.done[key]){
+            isDone |= history.value.done[key][ckey]
+          }
+          if(isDone){
+            done += 1
+          }
+        }
+        return 100*done/Object.getOwnPropertyNames(history.value.done).length
+      })
+      
+      //计算用的时间
+      function getSpan(){
+        let end = new Date()
+        let span = end - start
+        return Math.floor(span/3600000)+":"+num2Str(Math.floor(span / 60000))+":"+num2Str(Math.floor(span / 1000))
+      }
+
+      //判断是否正确
+      function check(ans, key){
+        for(let k in key){
+          if(!ans[k]){
+            return false
+          }
+        }
+        return key.length === Object.keys(ans).length
+      }
+
+      //结束时提交
+      onUnmounted(()=>{
+        history.value.endTime = getTime()
+        history.value.span = getSpan()
+        history.value.num = Object.keys(history.value.done).length
+        for(let id in history.value.done){
+          if(check(history.value.done[id], excs.value[id].key))
+            history.value.proper += 1
+        }
+        let time = getDate()+":"+history.value.endTime
+        store.commit("addHistory", {time: time, history: history.value})
+      })
+
+      return {
+        excs,
+        history,
+        excName,
+        click,
+        progress
+      }
+    }
+}
+</script>
+
+<style>
+
+</style>
