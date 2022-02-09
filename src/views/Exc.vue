@@ -1,7 +1,7 @@
 <template>
   <el-container style="height:100%;">
       <el-aside style="height:100%; position:fixed;margin-top:60px">
-         <info-bar :progress="progress" :excName="excName"/>
+         <info-bar :progress="progress" :excName="excName" @submit="submit"/>
       </el-aside>
 
       <el-main style="height:calc(100%-60px);margin-left:300px;margin-top:60px;">
@@ -20,16 +20,17 @@
 
 <script>
 import InfoBar from '../components/InfoBar.vue'
-import { computed, onUnmounted, ref, onUpdated, onMounted, onBeforeUpdate, onBeforeMount} from 'vue'
-import { useRoute } from 'vue-router'
+import { ElNotification } from "element-plus";
+import { computed, h, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios';
 import { useStore } from 'vuex'
 
 export default {  
   components: { InfoBar },
     async setup(){
-
       const store = useStore()
+      const router = useRouter()
 
       //得到当前的题集名称
       const route = useRoute()
@@ -38,6 +39,9 @@ export default {
       //记录下开始的时间
       const start = new Date()
       
+      //是否提交
+      const isSubmit = ref(false)
+
       //数字转为两位字符串
       function num2Str(num){
         return ("00"+num.toString()).slice(-2)
@@ -86,7 +90,7 @@ export default {
           }
       })
 
-      //点击的回调事件
+      //点击的回调事件，确保单选
       function click(key, ck){
         if(!excs.value[key].multi){
           for(let choice in history.value.done[key]){
@@ -129,8 +133,9 @@ export default {
         return key.length === Object.keys(ans).length
       }
 
-      //结束时提交
-      onUnmounted(()=>{
+      //点击的回调函数
+      function submit(){
+        //结束时提交
         history.value.endTime = getTime()
         history.value.span = getSpan()
         history.value.num = Object.keys(history.value.done).length
@@ -140,14 +145,33 @@ export default {
         }
         let time = getDate()+":"+history.value.endTime
         store.commit("addHistory", {time: time, history: history.value})
-      })
+
+        if(isSubmit.value){
+          router.push({ name: "data" });
+        }
+        else {
+          if (confirm("确定提交吗?")) {  
+            isSubmit.value = true
+            ElNotification({
+              title: "确认提交",
+              message: h(
+                "i",
+                { style: "color: teal" },
+                "提交成功，请到历史记录中查看。"
+              ),
+            });
+          }
+        }
+      }
 
       return {
         excs,
         history,
         excName,
         click,
-        progress
+        progress,
+        submit,
+        isSubmit,
       }
     }
 }

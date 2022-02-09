@@ -21,40 +21,35 @@
       <el-progress :percentage="0" type="circle" />
     </div>
     <div class="bar-item" style="height: calc(100% - 475px)">
-      <el-button style="margin-top: 10px" @click="submit()">提交</el-button>
+      <el-button style="margin-top: 10px" @click="submit()">{{ text }}</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { useRouter } from "vue-router";
-import { onUnmounted, toRefs, ref, h } from "vue";
-import { ElNotification } from "element-plus";
+import { onUnmounted, toRefs, ref } from "vue";
 
 export default {
+   emits: {
+     submit: null
+   },
   props: {
     progress: Number,
-    excName: String,
+    excName: String
   },
-  setup(props) {
-    const router = useRouter();
+  setup(props, context) {
+
+    const { progress, excName } = toRefs(props)
+
+    const text = ref("提交")
+
     //提交按钮的回调函数
     function submit() {
-      if (confirm("确定提交吗?")) {
-        ElNotification({
-          title: "确认提交",
-          message: h(
-            "i",
-            { style: "color: teal" },
-            "提交成功，请到历史记录中查看。"
-          ),
-        });
-        router.push({ name: "data" });
-      }
+      text.value = "返回"
+      context.emit('submit')
     }
 
-    const { progress } = toRefs(props);
-
+  
     let _seconds = 0;
     let _minutes = 0;
     let _hours = 0;
@@ -95,11 +90,13 @@ export default {
     }
 
     return {
+      text,
       submit,
       progress,
       seconds,
       minutes,
       hours,
+      excName
     };
   },
 };

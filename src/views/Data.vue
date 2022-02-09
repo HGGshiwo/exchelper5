@@ -24,7 +24,7 @@ export default {
       let t = []
       for(let time in history){
         let deatail = time.split(":")
-        t.push({
+        t.unshift({
           date: deatail[0]+'-'+deatail[2]+'-'+deatail[3],
           span: history[time].span,
           number: Object.keys(history[time].done).length,

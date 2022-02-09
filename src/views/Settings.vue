@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { nextTick, reactive, ref } from "vue";
+import { nextTick, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import axios from "axios";
