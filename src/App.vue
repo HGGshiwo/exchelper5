@@ -1,24 +1,20 @@
 <template>
-  <el-container style="height:100%;">
-    <el-header style="position:fixed;width:100%;text-align:left">
-      <el-image style="height:50px" src="/logol.png"></el-image>
-    </el-header >  
+  <el-container style="height: 100%">
+    <el-header style="position: fixed; width: 100%; text-align: left">
+      <el-image style="height: 50px" src="/logol.png"></el-image>
+    </el-header>
     <Suspense>
-			<template v-slot:default>
-				<router-view></router-view>
-			</template>
-			<template v-slot:fallback>
-				<el-skeleton :rows="8" animated />
-			</template>
-		</Suspense>
-    
+      <template v-slot:default>
+        <router-view></router-view>
+      </template>
+      <template v-slot:fallback>
+        <el-skeleton :rows="8" animated />
+      </template>
+    </Suspense>
   </el-container>
 </template>
 <script>
-
-export default {
-  
-}
+export default {};
 </script>
 <style>
 #app {

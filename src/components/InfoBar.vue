@@ -18,7 +18,7 @@
     </div>
     <div class="bar-item" style="height: 150px">
       <div class="bar-title">准确率</div>
-      <el-progress :percentage="0" type="circle" />
+      <el-progress :percentage="correctness" type="circle" />
     </div>
     <div class="bar-item" style="height: calc(100% - 475px)">
       <el-button style="margin-top: 10px" @click="submit()">{{ text }}</el-button>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { onUnmounted, toRefs, ref } from "vue";
+import { toRefs, ref, computed } from "vue";
 
 export default {
    emits: {
@@ -35,33 +35,41 @@ export default {
    },
   props: {
     progress: Number,
-    excName: String
+    correctness: Number,
+    excName: String,
+    submited: Boolean,
+    hSecods:String,
+    hHours:String,
+    hMinutes:String,
   },
   setup(props, context) {
 
-    const { progress, excName } = toRefs(props)
-
-    const text = ref("提交")
+    const { progress, excName, submited, correctness, hSecods, hMinutes, hHours } = toRefs(props)
+    
+    const isSubmit = ref(submited.value)
+    const text = computed(()=>{
+      return isSubmit.value ? "返回": "提交"
+    })
 
     //提交按钮的回调函数
     function submit() {
-      text.value = "返回"
+      isSubmit.value = true
+      if(timer) clearInterval(timer);
       context.emit('submit')
     }
-
   
     let _seconds = 0;
     let _minutes = 0;
     let _hours = 0;
 
-    const seconds = ref("00");
-    const minutes = ref("00");
-    const hours = ref("00");
+    const seconds = ref(hSecods.value);
+    const minutes = ref(hMinutes.value);
+    const hours = ref(hHours.value);
 
     const countDown = false;
 
     //计时器
-    const timer = setInterval(() => {
+    const timer = submited.value ? null : setInterval(() => {
       _seconds += countDown ? -1 : 1;
       if (!countDown) {
         if (_seconds == 60) {
@@ -81,10 +89,6 @@ export default {
       hours.value = num2Str(_hours);
     }, 1000);
 
-    onUnmounted(() => {
-      clearInterval(timer);
-    });
-
     function num2Str(num) {
       return ("00" + num.toString()).slice(-2);
     }
@@ -92,6 +96,7 @@ export default {
     return {
       text,
       submit,
+      correctness,
       progress,
       seconds,
       minutes,

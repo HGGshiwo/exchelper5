@@ -26,7 +26,7 @@ export default createStore({
       submitWay: "sc",
       autoFresh: true,
       localStorage: true,
-      num: 20,
+      num: 2,
     }
   },
   mutations: {

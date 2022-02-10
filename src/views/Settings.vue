@@ -43,7 +43,12 @@
     <el-divider />
 
     <el-form-item label="选择题集">
-      <el-table :data="tableData" ref="tableRef" style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table
+        :data="tableData"
+        ref="tableRef"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column type="selection" width="90"> </el-table-column>
         <el-table-column prop="name" label="Name" width="180" />
         <el-table-column prop="total" label="Number" width="180" />
@@ -67,7 +72,7 @@ import axios from "axios";
 
 export default {
   async setup() {
-    const tableRef = ref(null)
+    const tableRef = ref(null);
     //发送请求得到table data
     const tableData = ref([]);
     const store = useStore();
@@ -86,44 +91,43 @@ export default {
       .catch((error) => {
         alert(error);
       })
-      .then(()=>{
+      .then(() => {
         nextTick(() => {
           tableData.value.forEach((row) => {
-          tableRef.value.toggleRowSelection(row, row.selected);
+            tableRef.value.toggleRowSelection(row, row.selected);
           });
-        })
-      }
-      );
+        });
+      });
 
-    const form = ref({...store.state.setting});
+    const form = ref({ ...store.state.setting });
 
     const router = useRouter();
     function onSubmit() {
       if (confirm("确定修改吗?")) {
         //此时更新myExc
-        let newExc = {}
-        const { myExc } =  store.state
-        selects.forEach((exc)=>{
-          if(exc.name in myExc){
-            newExc[exc.name] = myExc[exc.name] 
-          }
-          else{
+        let newExc = {};
+        const { myExc } = store.state;
+        selects.forEach((exc) => {
+          if (exc.name in myExc) {
+            newExc[exc.name] = myExc[exc.name];
+          } else {
             newExc[exc.name] = {
-              last:"2022:2:9:12:23:12",
-              total:exc.total,
-              done:0,
-              proper:0}
+              last: "2022:2:9:12:23:12",
+              total: exc.total,
+              done: 0,
+              proper: 0,
+            };
           }
-        })
-        store.commit("changeSetting", {form:form.value, myExc:newExc})
+        });
+        store.commit("changeSetting", { form: form.value, myExc: newExc });
         router.push("/");
       }
     }
 
-    let selects = []
+    let selects = [];
     //改变题集后的回调函数
-    function handleSelectionChange(val){
-      selects = [...val]
+    function handleSelectionChange(val) {
+      selects = [...val];
     }
 
     return {

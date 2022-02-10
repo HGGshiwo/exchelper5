@@ -28,9 +28,10 @@ const routes = [
     ],
   },
   {
-    path: '/exc/:excName',
+    path: '/exc',
     name: 'exc',
-    component: Exc
+    component: Exc,
+    props: true
   },
 ]
 

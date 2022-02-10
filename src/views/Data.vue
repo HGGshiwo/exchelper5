@@ -7,7 +7,9 @@
       <el-table-column prop="start" label="Start" width="150" />
       <el-table-column prop="end" label="End" width="150" />
       <el-table-column label="" width="90">
-        <el-button @click="handleClick()">查看</el-button>
+        <template #default="scope">
+          <el-button @click="handleClick(scope.row)">查看</el-button>
+        </template>
       </el-table-column>
     </el-table>
 </template>
@@ -15,9 +17,11 @@
 <script>
 import { computed } from '@vue/runtime-core'
 import { useStore } from "vuex"
+import { useRouter } from "vue-router"
 
 export default {
   setup(){
+    const router = useRouter()
     const store = useStore()
     const { history } = store.state    
     const tableData = computed(()=>{
@@ -25,6 +29,7 @@ export default {
       for(let time in history){
         let deatail = time.split(":")
         t.unshift({
+          time: time,
           date: deatail[0]+'-'+deatail[2]+'-'+deatail[3],
           span: history[time].span,
           number: Object.keys(history[time].done).length,
@@ -36,12 +41,13 @@ export default {
       return t
     })
 
-    function handleClick(){
-      alert("正在开发中，暂时无法查看历史")
+    function handleClick(row){
+      router.push({"name":"exc", params:{"excName":row.name, submited: true, historyTime: row.time,}})
     }
+
     return {
-      handleClick,
-      tableData
+      handleClick, //点击查看的回调函数
+      tableData //表格展示数据
     }
   }
   

@@ -41,7 +41,7 @@ export default {
     const mys = ref(store.state.myExc)
     const router = useRouter()
     function to(where,key){
-      router.push({"name":where, params:{"excName":key}})
+      router.push({"name":where, params:{excName:key, historyTime: "0000:00:00:00:00:00",}})
     }
     const info = [
       ["#f9f9f9","#f9f9f9","#f9f9f9","#f9f9f9","#f9f9f9","#f9f9f9","#f9f9f9",],
