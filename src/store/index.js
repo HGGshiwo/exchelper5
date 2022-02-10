@@ -2,23 +2,8 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    myExc: {
-      "test1": { last: "2022:2:9:12:23:12", total: 30, done: 20, proper: 5 }
-    },
-    history: {
-      "2022:02:09:12:23:12": {
-        exc: "毛概题集",
-        done: {
-          "1": { "A": true, "B": false, "C": false, "D": false },
-          "2": { "A": true, "B": false, "C": false, "D": false },
-        },
-        startTime: "12:00:20",
-        endTime: "12:00:11",
-        span: "00:00:11",
-        num: 2,
-        proper: 1,
-      }
-    },
+    myExc: {},
+    history: {},
     setting: {
       countDown: true,
       span: 50,
@@ -26,14 +11,36 @@ export default createStore({
       submitWay: "sc",
       autoFresh: true,
       localStorage: true,
-      num: 2,
-    }
+      num: 20,
+    },
+    note: [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+    ],
+    update: false
   },
   mutations: {
+    setUpdate(state){
+      state.update = true
+    },
+    init(state, payload) {
+      const { myExc, history, setting, note, update } = payload
+      state.history = history
+      state.setting = setting
+      state.note = note
+      state.myExc = myExc
+      state.update = update
+    },
+    save(state) {
+      localStorage.setItem("_EXC_HELPER_STATE_", JSON.stringify(state))
+    },
     addHistory(state, payload) {
       // 变更状态
       const { time, history } = payload
       state.history[time] = history
+      console.log(history.exc,state.myExc)
       const { done, proper } = state.myExc[history.exc]
       const { num: curNum, proper: curProper } = history
       state.myExc[history.exc] = {
@@ -42,11 +49,13 @@ export default createStore({
         done: done + curNum,
         proper: proper + curProper
       }
+      const d = new Date()
+      state.note[Math.floor(d.getDate() / 7) % 4][d.getDay()] += history.num
     },
-    changeSetting(state, payload){
+    changeSetting(state, payload) {
       const { form, myExc } = payload
-      state.setting = {...form}
-      state.myExc = {...myExc}
+      state.setting = { ...form }
+      state.myExc = { ...myExc }
     }
   },
   actions: {

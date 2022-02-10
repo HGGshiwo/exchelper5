@@ -1,7 +1,21 @@
 <template>
-  <el-container style="height: 100%">
-    <el-header style="position: fixed; width: 100%; text-align: left">
-      <el-image style="height: 50px" src="/logol.png"></el-image>
+  <el-container style="height: 100%; width: 100%;">
+    <el-header style="position: fixed; width: 100%; text-align: left; z-index:10; background-color:white;left: 0;top: 0;right: 0;">
+      <el-row
+        ><el-col :span="18"
+          ><img style="height: 50px" src="./static/logol.png"
+        /></el-col>
+        <el-col :span="2"
+          ><el-link type="primary" href="mailto:1272126735@qq.com"
+            >联系作者</el-link
+          ></el-col
+        >
+        <el-col :span="1"
+          ><el-link type="primary" href="https://github.com/HGGshiwo/exchelper5"
+            >项目地址</el-link
+          ></el-col
+        >
+      </el-row>
     </el-header>
     <Suspense>
       <template v-slot:default>
@@ -14,7 +28,6 @@
   </el-container>
 </template>
 <script>
-export default {};
 </script>
 <style>
 #app {

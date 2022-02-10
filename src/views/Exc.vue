@@ -52,8 +52,8 @@
 
 <script>
 import InfoBar from "../components/InfoBar.vue";
-import { ElNotification } from "element-plus";
-import { computed, h, ref } from "vue";
+import { ElMessage } from "element-plus";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useStore } from "vuex";
@@ -124,8 +124,8 @@ export default {
           //过滤出未做过的id列表
           const ids = Object.keys(excs.value).filter((id) => {
             return dones.indexOf(id) === -1;
-          })
-          console.log(ids)
+          });
+          console.log(ids);
           let i = 0;
           for (; i < historyNum && i < ids.length; i++) {
             let key = ids[i];
@@ -194,11 +194,10 @@ export default {
       );
     }
 
-    const correctness = !isSubmit
-      ? 0
-      : computed(() => {
-          return (history.value.proper / history.value.num) * 100;
-        });
+    const correctness = computed(() => {
+      if (!isSubmit.value || isLoading.value) return 0;
+      return (history.value.proper / history.value.num) * 100;
+    });
 
     //点击的回调函数
     function submit() {
@@ -216,15 +215,7 @@ export default {
           }
           let time = getDate() + ":" + history.value.endTime;
           store.commit("addHistory", { time: time, history: history.value });
-
-          ElNotification({
-            title: "确认提交",
-            message: h(
-              "i",
-              { style: "color: teal" },
-              "提交成功，请到历史记录中查看。"
-            ),
-          });
+          ElMessage('成功提交，请到历史记录中查看。')
         }
       }
     }
@@ -291,7 +282,4 @@ export default {
 </script>
 
 <style>
-.active {
-  color: red;
-}
 </style>

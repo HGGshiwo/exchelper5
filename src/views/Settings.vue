@@ -11,6 +11,8 @@
       <el-input-number
         v-model="form.span"
         :step="5"
+        :max="60"
+        :min="5"
         label="描述文字"
       ></el-input-number>
     </el-form-item>
@@ -25,7 +27,6 @@
         <el-radio label="rc" disabled>右键提交</el-radio>
       </el-radio-group>
     </el-form-item>
-
     <el-divider></el-divider>
     <el-form-item label="自动更新">
       <el-switch v-model="form.autoFresh"></el-switch>
@@ -36,12 +37,13 @@
     <el-form-item label="题目数量">
       <el-input-number
         v-model="form.num"
-        :step="5"
+        :step="1"
+        :min="1"
+        :max="100"
         label="描述文字"
       ></el-input-number>
     </el-form-item>
     <el-divider />
-
     <el-form-item label="选择题集">
       <el-table
         :data="tableData"
@@ -56,7 +58,6 @@
         <el-table-column prop="update" label="Update" width="150" />
       </el-table>
     </el-form-item>
-
     <el-form-item>
       <el-button type="primary" @click="onSubmit">确定</el-button>
       <el-button style="margin-left: 40%">取消</el-button>
@@ -112,7 +113,7 @@ export default {
             newExc[exc.name] = myExc[exc.name];
           } else {
             newExc[exc.name] = {
-              last: "2022:2:9:12:23:12",
+              last: "0000:00:00:00:00:00",
               total: exc.total,
               done: 0,
               proper: 0,
