@@ -150,14 +150,6 @@ export default {
         //数据已经就绪
         isLoading.value = false;
       });
-    
-    //销毁时如果没有提交，则提交然后跳到data界面
-    onBeforeUnmount(()=>{
-      if(!isSubmit.value){
-        submitHistory()
-        router.push({name:"data"})
-      }
-    })
       
 
     //计算进度值
