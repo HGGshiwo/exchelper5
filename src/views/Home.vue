@@ -79,7 +79,6 @@ export default {
       if (!str || str.length === 2) {
         ElMessage("已经为您初始化数据，具体设置请到设置页面更改。");
         store.commit("setUpdate")
-        console.log(store.state.update)
       } else {
         store.commit("init", JSON.parse(str));
       }

@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { toRefs, ref, computed } from "vue";
+import { toRefs, ref, computed, onBeforeUnmount } from "vue";
 
 export default {
    emits: {
@@ -92,6 +92,13 @@ export default {
     function num2Str(num) {
       return ("00" + num.toString()).slice(-2);
     }
+
+    onBeforeUnmount(()=>{
+      //如果是没有点击提交就跳出的，则销毁timer
+      if(timer){
+        clearInterval(timer)
+      }
+    })
 
     return {
       text,
