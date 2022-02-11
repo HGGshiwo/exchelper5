@@ -8,7 +8,7 @@ State中保存: settings, myExc, history
 
 exc.json，格式：
 
-```
+```json
 {
 	"00000“:{
 		text:"xx",
@@ -24,7 +24,7 @@ exc.json，格式：
 
 history保存数据:
 
-```
+```json
 {
 	"2022:2:9:12:23:12":{
 		exc:"test1",
@@ -43,7 +43,7 @@ history保存数据:
 
 更新信息my exc：
 
-```
+```json
 {
 	"xxx":{last:"2022:2:9:12:23:12",total:100,done:20,proper:5}
 }
@@ -51,13 +51,27 @@ history保存数据:
 
 tableHistory:
 
-```
+```js
 [
 [1,2,0,0,0,0,33],
 [1,2,0,0,0,0,33],
 [1,2,0,0,0,0,33],
 [1,2,0,0,0,0,33],
 ]
+```
+
+setting:
+
+```
+ setting: {
+      countDown: true,
+      span: 50,
+      autoSubmit: true,
+      submitWay: "sc",
+      autoFresh: true,
+      localStorage: true,
+      num: 20,
+    },
 ```
 
 

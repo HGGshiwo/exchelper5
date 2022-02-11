@@ -40,7 +40,6 @@ export default createStore({
       // 变更状态
       const { time, history } = payload
       state.history[time] = history
-      console.log(history.exc,state.myExc)
       const { done, proper } = state.myExc[history.exc]
       const { num: curNum, proper: curProper } = history
       state.myExc[history.exc] = {
@@ -51,6 +50,16 @@ export default createStore({
       }
       const d = new Date()
       state.note[Math.floor(d.getDate() / 7) % 4][d.getDay()] += history.num
+    },
+    deleteHistory(state, time){
+      const { exc, num:curNum , proper:curProper } = state.history[time]
+      delete state.history[time]
+      const { done, proper } = state.myExc[exc]
+      state.myExc[exc] = {
+        ...state.myExc[exc],
+        done: done - curNum,
+        proper: proper - curProper
+      }
     },
     changeSetting(state, payload) {
       const { form, myExc } = payload

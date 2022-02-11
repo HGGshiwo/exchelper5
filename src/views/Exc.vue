@@ -53,7 +53,7 @@
 <script>
 import InfoBar from "../components/InfoBar.vue";
 import { ElMessage } from "element-plus";
-import { computed, onBeforeUnmount, ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useStore } from "vuex";
@@ -70,10 +70,14 @@ export default {
 
     //得到当前的题集名称
     const { excName, historyTime } = props;
+    const {
+      setting: { num: historyNum, span, countDown },
+      history: historys,
+    } = store.state;
 
     //如果没有传入参数，直接跳到home页面
-    if(!historyTime){
-      router.push({name:"home"})
+    if (!historyTime) {
+      router.push({ name: "home" });
     }
 
     //记录下开始的时间
@@ -86,17 +90,23 @@ export default {
     const isLoading = ref(true);
 
     //如果是已经提交的，则使用pre history，否则新建一条history
-    const history = (submited && !!historyTime)
-      ? ref(store.state.history[historyTime])
-      : ref({
-          exc: excName,
-          done: {},
-          startTime: getTime(),
-          endTime: "",
-          span: "00:00:00",
-          num: 0,
-          proper: 0,
-        });
+    const history =
+      submited && !!historyTime
+        ? ref(historys[historyTime])
+        : ref({
+            exc: excName,
+            done: {},
+            startTime: getTime(),
+            endTime: "",
+            span: countDown
+              ? num2Str(Math.floor(span / 60)) +
+                ":" +
+                num2Str(span % 60) +
+                ":00"
+              : "00:00:00",
+            num: 0,
+            proper: 0,
+          });
 
     //给出InfoBar的时间，如果已经提交则是history中的时间，否则是00
     let hhmmss = history.value.span.split(":");
@@ -106,51 +116,48 @@ export default {
 
     //请求当前的完整题集
     const excs = ref({});
-    const { num: historyNum } = store.state.setting;
-    
-    if(!!excName) 
-    axios
-      .get("https://hggshiwo.github.io/static/" + excName + ".json")
-      .then((res) => {
-        excs.value = res.data;
-      })
-      .catch((error) => {
-        alert(error);
-        router.push({name:"home"})
-      })
-      .then(() => {
-        //如果是未提交的，则从题集中生成需要做的题目id，然后赋值给history
-        if (!submited) {
-          //查找history表，生成已经完成的题目列表
-          const { history: historys } = store.state;
-          let dones = [];
-          for (let t in historys) {
-            if (historys[t].exc === excName) {
-              dones = [...dones, ...Object.keys(historys[t].done)];
+
+    if (!!excName)
+      axios
+        .get("https://hggshiwo.github.io/static/" + excName + ".json")
+        .then((res) => {
+          excs.value = res.data;
+        })
+        .catch((error) => {
+          alert(error);
+          router.push({ name: "home" });
+        })
+        .then(() => {
+          //如果是未提交的，则从题集中生成需要做的题目id，然后赋值给history
+          if (!submited) {
+            //查找history表，生成已经完成的题目列表
+            let dones = [];
+            for (let t in historys) {
+              if (historys[t].exc === excName) {
+                dones = [...dones, ...Object.keys(historys[t].done)];
+              }
             }
-          }
-          //过滤出未做过的id列表
-          const ids = Object.keys(excs.value).filter((id) => {
-            return dones.indexOf(id) === -1;
-          });
-          let i = 0;
-          for (; i < historyNum && i < ids.length; i++) {
-            let key = ids[i];
-            history.value.done[key] = {};
-            for (let kk in excs.value[key].choices) {
-              history.value.done[key][kk] = false;
+            //过滤出未做过的id列表
+            const ids = Object.keys(excs.value).filter((id) => {
+              return dones.indexOf(id) === -1;
+            });
+            let i = 0;
+            for (; i < historyNum && i < ids.length; i++) {
+              let key = ids[i];
+              history.value.done[key] = {};
+              for (let kk in excs.value[key].choices) {
+                history.value.done[key][kk] = false;
+              }
             }
+            if (i == 0) {
+              alert("你已经做完了该题目集，请查看历史记录");
+              router.push({ name: "data" });
+            }
+            history.value = { ...history.value, proper: 0, num: i };
           }
-          if (i == 0) {
-            alert("你已经做完了该题目集，请查看历史记录");
-            router.push({ name: "data" });
-          }
-          history.value = { ...history.value, proper: 0, num: i };
-        }
-        //数据已经就绪
-        isLoading.value = false;
-      });
-      
+          //数据已经就绪
+          isLoading.value = false;
+        });
 
     //计算进度值
     const progress = computed(() => {
@@ -208,15 +215,15 @@ export default {
     });
 
     //完善记录并且提交
-    function submitHistory(){
+    function submitHistory() {
       history.value.endTime = getTime();
-          history.value.span = getSpan();
-          history.value.num = Object.keys(history.value.done).length;
-          for (let id in history.value.done) {
-            if (check(id)) history.value.proper += 1;
-          }
-          let time = getDate() + ":" + history.value.endTime;
-          store.commit("addHistory", { time: time, history: history.value });
+      history.value.span = getSpan();
+      history.value.num = Object.keys(history.value.done).length;
+      for (let id in history.value.done) {
+        if (check(id)) history.value.proper += 1;
+      }
+      let time = getDate() + ":" + history.value.endTime;
+      store.commit("addHistory", { time: time, history: history.value });
     }
 
     //点击的回调函数
@@ -227,8 +234,8 @@ export default {
         if (confirm("确定提交吗?")) {
           isSubmit.value = true;
           //完善历史记录并且提交
-          submitHistory()
-          ElMessage('成功提交，请到历史记录中查看。')
+          submitHistory();
+          ElMessage("成功提交，请到历史记录中查看。");
         }
       }
     }

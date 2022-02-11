@@ -28,6 +28,31 @@
   </el-container>
 </template>
 <script>
+import { ElMessage } from "element-plus";
+import { useStore } from "vuex";
+
+export default {
+  setup(){
+    const store = useStore();
+    //页面关闭或者刷新则保存数据
+    window.onbeforeunload = () => {
+      ElMessage("数据已保存。");
+      store.commit("save");
+    };
+
+    //update=false表示之前没有更新过，此时通过LocalStorage更新。
+    //如果localStorage=null，说明第一次打开应用，此时使用state中的
+    if (!store.state.update) {
+      const str = localStorage.getItem("_EXC_HELPER_STATE_");
+      if (!str || str.length === 2) {
+        ElMessage("已经为您初始化数据，具体设置请到设置页面更改。");
+        store.commit("setUpdate")
+      } else {
+        store.commit("init", JSON.parse(str));
+      }
+    }
+  }
+}
 </script>
 <style>
 #app {

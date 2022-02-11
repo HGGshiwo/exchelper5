@@ -2,8 +2,8 @@
   <el-form ref="formRef" :model="form" label-width="80px">
     <el-form-item label="计时顺序">
       <el-radio-group v-model="form.countDown">
-        <el-radio :label="false">倒计时</el-radio>
-        <el-radio :label="true">正计时</el-radio>
+        <el-radio :label="true">倒计时</el-radio>
+        <el-radio :label="false">正计时</el-radio>
         <el-radio :label="null" disabled>无计时</el-radio>
       </el-radio-group>
     </el-form-item>
