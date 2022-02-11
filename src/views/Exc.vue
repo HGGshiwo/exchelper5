@@ -141,6 +141,7 @@ export default {
             const ids = Object.keys(excs.value).filter((id) => {
               return dones.indexOf(id) === -1;
             });
+            console.log(ids)
             let i = 0;
             for (; i < historyNum && i < ids.length; i++) {
               let key = ids[i];
