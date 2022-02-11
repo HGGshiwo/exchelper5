@@ -265,7 +265,7 @@ export default {
         ":" +
         num2Str(date.getMonth() + 1) +
         ":" +
-        num2Str(date.getDay())
+        num2Str(date.getDate())
       );
     }
 

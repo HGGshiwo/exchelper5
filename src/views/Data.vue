@@ -35,7 +35,7 @@ export default {
         let deatail = time.split(":");
         t.unshift({
           time: time,
-          date: deatail[0] + "-" + deatail[2] + "-" + deatail[3],
+          date: deatail[0] + "-" + deatail[1] + "-" + deatail[2],
           span: history[time].span,
           number: Object.keys(history[time].done).length,
           name: history[time].exc,
