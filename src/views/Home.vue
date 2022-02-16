@@ -112,5 +112,6 @@ export default {
   padding: 20px;
   width: 350px;
   border: 1px solid var(--el-border-color-base);
+  background-color: white;
 }
 </style>

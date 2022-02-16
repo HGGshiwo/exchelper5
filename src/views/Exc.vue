@@ -1,6 +1,6 @@
 <template>
-  <el-container style="height: 100%">
-    <el-aside style="height: 100%; position: fixed; margin-top: 60px">
+  <el-container style="height: 800px;">
+    <el-aside style="height: 100%; position: fixed; margin-top: 60px" width="200">
       <info-bar
         :progress="progress"
         :correctness="correctness"
@@ -14,9 +14,9 @@
     </el-aside>
 
     <el-main
-      style="height: calc(100%-60px); margin-left: 300px; margin-top: 60px"
+      style="margin-left: 200px; margin-top: 60px"
     >
-      <el-scrollbar style="width: 100%">
+      <el-scrollbar>
         <div v-if="isLoading">
           <el-skeleton :rows="4" animated />
         </div>
@@ -24,7 +24,7 @@
           v-else
           v-for="(choices, key, i) in history.done"
           :key="key"
-          style="text-align: left"
+          style="text-align: left;background-color:white;padding:10px"
         >
           <p>{{ i + 1 }}&nbsp;&nbsp;{{ excs[key].text }}</p>
           <div v-for="(c, ck) in choices" :key="ck">
@@ -64,7 +64,7 @@ export default {
     excName: String,
     historyTime: String,
   },
-  async setup(props) {
+  setup(props) {
     const store = useStore();
     const router = useRouter();
 
@@ -174,7 +174,7 @@ export default {
         }
       }
       return (
-        (100 * done) / Object.getOwnPropertyNames(history.value.done).length
+        Math.round(1000 * done / Object.getOwnPropertyNames(history.value.done).length)/10
       );
     });
 
@@ -212,7 +212,7 @@ export default {
     //计算正确率
     const correctness = computed(() => {
       if (!isSubmit.value || isLoading.value) return 0;
-      return (history.value.proper / history.value.num) * 100;
+      return Math.round(history.value.proper / history.value.num * 1000)/10;
     });
 
     //完善记录并且提交

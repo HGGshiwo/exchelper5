@@ -1,6 +1,17 @@
 <template>
-  <el-container style="height: 100%; width: 100%;">
-    <el-header style="position: fixed; width: 100%; text-align: left; z-index:10; background-color:white;left: 0;top: 0;right: 0;">
+  <el-container style="height: 100%; width: 100%">
+    <el-header
+      style="
+        position: fixed;
+        width: 100%;
+        text-align: left;
+        z-index: 10;
+        background-color: white;
+        left: 0;
+        top: 0;
+        right: 0;
+      "
+    >
       <el-row
         ><el-col :span="18"
           ><img style="height: 50px" src="./static/logol.png"
@@ -17,14 +28,7 @@
         >
       </el-row>
     </el-header>
-    <Suspense>
-      <template v-slot:default>
-        <router-view></router-view>
-      </template>
-      <template v-slot:fallback>
-        <el-skeleton :rows="8" animated />
-      </template>
-    </Suspense>
+    <router-view></router-view>
   </el-container>
 </template>
 <script>
@@ -32,7 +36,7 @@ import { ElMessage } from "element-plus";
 import { useStore } from "vuex";
 
 export default {
-  setup(){
+  setup() {
     const store = useStore();
     //页面关闭或者刷新则保存数据
     window.onbeforeunload = () => {
@@ -46,13 +50,13 @@ export default {
       const str = localStorage.getItem("_EXC_HELPER_STATE_");
       if (!str || str.length === 2) {
         ElMessage("已经为您初始化数据，具体设置请到设置页面更改。");
-        store.commit("setUpdate")
+        store.commit("setUpdate");
       } else {
         store.commit("init", JSON.parse(str));
       }
     }
-  }
-}
+  },
+};
 </script>
 <style>
 #app {
@@ -63,5 +67,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-color: #f5f6f7;
+  height: 100%;
 }
 </style>

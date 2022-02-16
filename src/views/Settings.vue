@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="formRef" :model="form" label-width="80px">
+  <el-form style="background-color:white; padding:5px;" ref="formRef" :model="form" label-width="80px">
     <el-form-item label="计时顺序">
       <el-radio-group v-model="form.countDown">
         <el-radio :label="true">倒计时</el-radio>
@@ -72,7 +72,7 @@ import { useStore } from "vuex";
 import axios from "axios";
 
 export default {
-  async setup() {
+  setup() {
     const tableRef = ref(null);
     //发送请求得到table data
     const tableData = ref([]);

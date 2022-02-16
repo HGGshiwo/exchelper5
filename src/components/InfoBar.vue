@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; width: 200px">
+  <div style="height: 100%; width: 200px; background-color:white;">
     <div class="bar-item" style="height: 60px">
       <div class="bar-title">题集</div>
       <div style="font-size: 20px; margin-top: 5px; color: grey">
