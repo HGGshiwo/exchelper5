@@ -23,6 +23,7 @@ import { computed } from "@vue/runtime-core";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { ref } from 'vue'
+import { ElMessage } from 'element-plus';
 
 export default {
   setup() {
@@ -60,6 +61,7 @@ export default {
     function handleDelete(row){
       if(confirm("该操作不可逆，是否继续?")){
         store.commit("deleteHistory", row.time)
+        ElMessage("删除成功!")
       }
     }
 

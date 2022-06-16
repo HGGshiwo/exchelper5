@@ -65,6 +65,10 @@ export default createStore({
       const { form, myExc } = payload
       state.setting = { ...form }
       state.myExc = { ...myExc }
+    },
+    changeMyExc(state, payload) {
+      const { myExc } = payload
+      state.myExc = {...myExc}
     }
   },
   actions: {

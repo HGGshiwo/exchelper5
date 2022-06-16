@@ -26,7 +26,7 @@
           :key="key"
           style="text-align: left;background-color:white;padding:10px"
         >
-          <p>{{ i + 1 }}&nbsp;&nbsp;{{ excs[key].text }}</p>
+          <p>{{ i + 1 }}{{excs[key].multi===true?"(多选)":""}}&nbsp;&nbsp;{{ excs[key].text }}</p>
           <div v-for="(c, ck) in choices" :key="ck">
             <div>
               <el-checkbox
@@ -141,7 +141,6 @@ export default {
             const ids = Object.keys(excs.value).filter((id) => {
               return dones.indexOf(id) === -1;
             });
-            console.log(ids)
             let i = 0;
             for (; i < historyNum && i < ids.length; i++) {
               let key = ids[i];
